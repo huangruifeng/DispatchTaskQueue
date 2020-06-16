@@ -176,6 +176,11 @@ namespace dispatch_task_queue {
                 while (!_cancel && _tasks.empty() && _delat_tasks.empty())
                 {
                     _condition.wait_for(signal_mutex, std::chrono::milliseconds(50));
+                    
+                    if(!_delat_tasks.empty() || !_tasks.empty())
+                    {
+                        break;
+                    }
                 }
                 
                 while(!_cancel)
@@ -190,6 +195,11 @@ namespace dispatch_task_queue {
                         if(delayTask->triggerMs() < now)
                         {
                             _tasks.push(_delat_tasks.top());
+                            _delat_tasks.pop();
+                        }
+                        else
+                        {
+                            _delat_tasks.push(_delat_tasks.top());
                             _delat_tasks.pop();
                         }
                     }
