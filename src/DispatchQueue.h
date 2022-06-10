@@ -32,7 +32,7 @@ namespace dispatch_task_queue
         virtual void wait()
         {
             std::unique_lock<std::mutex> lock(_mutex);
-            _condition.wait_for(lock, std::chrono::milliseconds(100), [this] {
+            _condition.wait(lock, [this] {
                 return _signal;
             });
             _signal = false;
